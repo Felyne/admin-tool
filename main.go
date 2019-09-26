@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -11,9 +12,21 @@ type Command interface {
 	Run() error
 }
 
+var (
+	Version   = ""
+	BuildTime = ""
+)
+var getVersion = flag.Bool("v", false, "print current version")
+
 var commandList []Command
 
 func main() {
+	flag.Parse()
+	if *getVersion {
+		fmt.Println("Version:", Version)
+		fmt.Println("BuildTime:", BuildTime)
+		return
+	}
 	commandList := []Command{
 		&ConfigCommand{},
 	}

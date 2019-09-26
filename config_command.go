@@ -41,6 +41,7 @@ func (cm *ConfigCommand) Run() error {
 	return nil
 }
 
+//上传单个配置文件
 func (cm *ConfigCommand) runSet(args []string) error {
 	if len(args) < 4 {
 		fmt.Printf("Usage:%s %s set [envName] [cfgName] [fileName] [etcdAddr...]\n",
@@ -75,6 +76,7 @@ func (cm *ConfigCommand) runSet(args []string) error {
 	return nil
 }
 
+//获取单个配置信息
 func (cm *ConfigCommand) runGet(args []string) error {
 	if len(args) < 3 {
 		fmt.Printf("Usage:%s %s get [envName] [cfgName] [etcdAddr...]\n",
@@ -100,6 +102,7 @@ func (cm *ConfigCommand) runGet(args []string) error {
 	return nil
 }
 
+//下载指定命名空间的配置到目标目录
 func (cm *ConfigCommand) runDump(args []string) error {
 	if len(args) < 3 {
 		fmt.Printf("Usage:%s %s dump [envName] [dirPath] [etcdAddr...]\n",
@@ -127,7 +130,7 @@ func (cm *ConfigCommand) runDump(args []string) error {
 	for cfgName, content := range cfgMap {
 		func() {
 			fileName := strings.Join([]string{dirPath, cfgName},
-				config_center.PathSeparator)
+				string(os.PathSeparator))
 			_ = ioutil.WriteFile(fileName, []byte(content), 0600)
 			fmt.Printf("dump %s\n", cfgName)
 		}()
@@ -135,6 +138,7 @@ func (cm *ConfigCommand) runDump(args []string) error {
 	return nil
 }
 
+//上目录下的配置文件
 func (cm *ConfigCommand) runRestore(args []string) error {
 	if len(args) < 3 {
 		fmt.Printf("Usage:%s %s restore [envName] [dirPath] [etcdAddr...]\n",
@@ -164,7 +168,7 @@ func (cm *ConfigCommand) runRestore(args []string) error {
 	}
 	for _, file := range files {
 		f, err := os.Open(strings.Join([]string{dirPath, file.Name()},
-			config_center.PathSeparator))
+			string(os.PathSeparator)))
 		if nil != err {
 			fmt.Println(err)
 			continue
