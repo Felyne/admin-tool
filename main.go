@@ -49,6 +49,6 @@ func help() {
 		nameList = append(nameList, cmd.CommandName())
 	}
 	fmt.Printf("Usage:%s [command] [args]\n", os.Args[0])
-	fmt.Printf("    commands are:%s\n", strings.Join(nameList, ","))
+	fmt.Printf("    commands are: %s\n", strings.Join(nameList, ","))
 	os.Exit(1)
 }

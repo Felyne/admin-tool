@@ -24,7 +24,7 @@ func (cm *ConfigCommand) CommandName() string {
 func (cm *ConfigCommand) Run() error {
 	if len(os.Args) < 3 {
 		fmt.Printf("Usage:%s %s [subCommand] [args]\n", os.Args[0], cm.CommandName())
-		fmt.Printf("    subCommand are:get set dump restore\n")
+		fmt.Printf("    subCommand are: get set del dump restore\n")
 		os.Exit(1)
 	}
 	subCommand := os.Args[2]
@@ -33,6 +33,8 @@ func (cm *ConfigCommand) Run() error {
 		return cm.runSet(args)
 	} else if subCommand == "get" {
 		return cm.runGet(args)
+	} else if subCommand == "del" {
+		return cm.runDel(args)
 	} else if subCommand == "dump" {
 		return cm.runDump(args)
 	} else if subCommand == "restore" {
@@ -71,6 +73,8 @@ func (cm *ConfigCommand) runSet(args []string) error {
 	if nil != err {
 		return err
 	}
+	defer cli.Close()
+
 	cc := config_center.NewConfigCenter(cli, envName)
 	err = cc.SetConfig(cfgName, string(content))
 	return nil
@@ -93,12 +97,42 @@ func (cm *ConfigCommand) runGet(args []string) error {
 	if nil != err {
 		return err
 	}
+	defer cli.Close()
+
 	cc := config_center.NewConfigCenter(cli, envName)
 	content, err := cc.GetConfig(cfgName)
 	if nil != err {
 		return err
 	}
 	fmt.Println(content)
+	return nil
+}
+
+//删除单个配置信息
+func (cm *ConfigCommand) runDel(args []string) error {
+	if len(args) < 3 {
+		fmt.Printf("Usage:%s %s del [envName] [cfgName] [etcdAddr...]\n",
+			os.Args[0], cm.CommandName())
+		os.Exit(1)
+	}
+	envName := args[0]
+	cfgName := args[1]
+	etcdAddrs := args[2:]
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   etcdAddrs,
+		DialTimeout: dialTimeout,
+	})
+	if nil != err {
+		return err
+	}
+	defer cli.Close()
+
+	cc := config_center.NewConfigCenter(cli, envName)
+	err = cc.RemoveConfig(cfgName)
+	if nil != err {
+		return err
+	}
+	fmt.Printf("del %s success\n", cfgName)
 	return nil
 }
 
@@ -122,6 +156,8 @@ func (cm *ConfigCommand) runDump(args []string) error {
 	if nil != err {
 		return err
 	}
+	defer cli.Close()
+
 	cc := config_center.NewConfigCenter(cli, envName)
 	cfgMap, err := cc.ListConfig()
 	if nil != err {
@@ -156,8 +192,9 @@ func (cm *ConfigCommand) runRestore(args []string) error {
 	if nil != err {
 		return err
 	}
-	cc := config_center.NewConfigCenter(cli, envName)
+	defer cli.Close()
 
+	cc := config_center.NewConfigCenter(cli, envName)
 	dir, err := os.Open(dirPath)
 	if nil != err {
 		return err
