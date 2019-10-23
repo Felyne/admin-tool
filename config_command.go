@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 
 	"strings"
-	"time"
 
 	"github.com/Felyne/config_center"
 	"github.com/coreos/etcd/clientv3"
 )
 
-var dialTimeout = 15 * time.Second
+const dialTimeout = 15 * time.Second
 
 type ConfigCommand struct {
 }
@@ -75,7 +75,7 @@ func (cm *ConfigCommand) runSet(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.NewConfigCenter(cli, envName)
+	cc := config_center.New(cli, envName)
 	err = cc.SetConfig(cfgName, string(content))
 	return nil
 }
@@ -99,7 +99,7 @@ func (cm *ConfigCommand) runGet(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.NewConfigCenter(cli, envName)
+	cc := config_center.New(cli, envName)
 	content, err := cc.GetConfig(cfgName)
 	if nil != err {
 		return err
@@ -127,7 +127,7 @@ func (cm *ConfigCommand) runDel(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.NewConfigCenter(cli, envName)
+	cc := config_center.New(cli, envName)
 	err = cc.RemoveConfig(cfgName)
 	if nil != err {
 		return err
@@ -158,7 +158,7 @@ func (cm *ConfigCommand) runDump(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.NewConfigCenter(cli, envName)
+	cc := config_center.New(cli, envName)
 	cfgMap, err := cc.ListConfig()
 	if nil != err {
 		return nil
@@ -194,7 +194,7 @@ func (cm *ConfigCommand) runRestore(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.NewConfigCenter(cli, envName)
+	cc := config_center.New(cli, envName)
 	dir, err := os.Open(dirPath)
 	if nil != err {
 		return err

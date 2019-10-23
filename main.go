@@ -7,11 +7,6 @@ import (
 	"strings"
 )
 
-type Command interface {
-	CommandName() string
-	Run() error
-}
-
 var (
 	Version   = ""
 	BuildTime = ""
