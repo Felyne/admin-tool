@@ -66,10 +66,7 @@ func (cm *ConfigCommand) runSet(args []string) error {
 		return err
 	}
 
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   etcdAddrs,
-		DialTimeout: dialTimeout,
-	})
+	cli, err := getEtcdClient(etcdAddrs)
 	if nil != err {
 		return err
 	}
@@ -90,10 +87,8 @@ func (cm *ConfigCommand) runGet(args []string) error {
 	envName := args[0]
 	cfgName := args[1]
 	etcdAddrs := args[2:]
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   etcdAddrs,
-		DialTimeout: dialTimeout,
-	})
+
+	cli, err := getEtcdClient(etcdAddrs)
 	if nil != err {
 		return err
 	}
@@ -118,10 +113,8 @@ func (cm *ConfigCommand) runDel(args []string) error {
 	envName := args[0]
 	cfgName := args[1]
 	etcdAddrs := args[2:]
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   etcdAddrs,
-		DialTimeout: dialTimeout,
-	})
+
+	cli, err := getEtcdClient(etcdAddrs)
 	if nil != err {
 		return err
 	}
@@ -149,10 +142,7 @@ func (cm *ConfigCommand) runDump(args []string) error {
 
 	_ = os.MkdirAll(dirPath, 0700)
 
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   etcdAddrs,
-		DialTimeout: dialTimeout,
-	})
+	cli, err := getEtcdClient(etcdAddrs)
 	if nil != err {
 		return err
 	}
@@ -185,10 +175,7 @@ func (cm *ConfigCommand) runRestore(args []string) error {
 	dirPath := args[1]
 	etcdAddrs := args[2:]
 
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   etcdAddrs,
-		DialTimeout: dialTimeout,
-	})
+	cli, err := getEtcdClient(etcdAddrs)
 	if nil != err {
 		return err
 	}
@@ -219,4 +206,11 @@ func (cm *ConfigCommand) runRestore(args []string) error {
 		fmt.Printf("restore %s\n", file.Name())
 	}
 	return nil
+}
+
+func getEtcdClient(etcdAddrs []string) (*clientv3.Client, error) {
+	return clientv3.New(clientv3.Config{
+		Endpoints:   etcdAddrs,
+		DialTimeout: dialTimeout,
+	})
 }
