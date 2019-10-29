@@ -2,7 +2,7 @@
 HEAD = `git rev-parse HEAD`
 TIME = `date +%FT%T%z`
 
-BINARY = "admin_tool"
+BINARY = "admin-tool"
 
 default: gotool
 	@CGO_ENABLED=0 go build -ldflags "-X main.Version=${HEAD} -X main.BuildTime=${TIME}" -o ${BINARY}

@@ -8,7 +8,7 @@ import (
 
 	"strings"
 
-	"github.com/Felyne/config_center"
+	"github.com/Felyne/configcenter"
 	"github.com/coreos/etcd/clientv3"
 )
 
@@ -72,7 +72,7 @@ func (cm *ConfigCommand) runSet(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.New(cli, envName)
+	cc := configcenter.New(cli, envName)
 	err = cc.SetConfig(cfgName, string(content))
 	return nil
 }
@@ -94,7 +94,7 @@ func (cm *ConfigCommand) runGet(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.New(cli, envName)
+	cc := configcenter.New(cli, envName)
 	content, err := cc.GetConfig(cfgName)
 	if nil != err {
 		return err
@@ -120,7 +120,7 @@ func (cm *ConfigCommand) runDel(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.New(cli, envName)
+	cc := configcenter.New(cli, envName)
 	err = cc.RemoveConfig(cfgName)
 	if nil != err {
 		return err
@@ -148,7 +148,7 @@ func (cm *ConfigCommand) runDump(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.New(cli, envName)
+	cc := configcenter.New(cli, envName)
 	cfgMap, err := cc.ListConfig()
 	if nil != err {
 		return nil
@@ -181,7 +181,7 @@ func (cm *ConfigCommand) runRestore(args []string) error {
 	}
 	defer cli.Close()
 
-	cc := config_center.New(cli, envName)
+	cc := configcenter.New(cli, envName)
 	dir, err := os.Open(dirPath)
 	if nil != err {
 		return err
