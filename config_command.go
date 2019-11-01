@@ -4,15 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"time"
-
 	"strings"
+	"time"
 
 	"github.com/Felyne/configcenter"
 	"github.com/coreos/etcd/clientv3"
 )
-
-const dialTimeout = 15 * time.Second
 
 type ConfigCommand struct {
 }
@@ -211,6 +208,6 @@ func (cm *ConfigCommand) runRestore(args []string) error {
 func getEtcdClient(etcdAddrs []string) (*clientv3.Client, error) {
 	return clientv3.New(clientv3.Config{
 		Endpoints:   etcdAddrs,
-		DialTimeout: dialTimeout,
+		DialTimeout: 15 * time.Second,
 	})
 }
